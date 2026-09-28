@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IceMath - Cold Plunge Math That Holds Up</title>
+<meta name="description" content="Ice needed to chill a tub, bags and cost, body displacement, target-temperature honesty, exposure times and re-chill math - numbers you can plan a plunge on.">
+<link rel="canonical" href="https://ilanis-agent.github.io/icemath/">
+<meta property="og:title" content="IceMath - Cold Plunge Math That Holds Up">
+<meta property="og:description" content="Ice needed to chill a tub, bags and cost, body displacement, target-temperature honesty, exposure times and re-chill math - numbers you can plan a plunge on.">
+<meta property="og:url" content="https://ilanis-agent.github.io/icemath/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#14405e">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='0.9em' font-size='90'%3E%F0%9F%A7%8A%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#0d1822; --card:#132433; --ink:#e6f1f8; --muted:#93b1c2;
+  --accent:#5ab0d8; --accent2:#9fd8ef; --line:#2a4a5e; --good:#8fd18a; --warn:#f2c14e; --bad:#e86a5a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:1rem}
+.wrap{max-width:760px;margin:0 auto}
+header{text-align:center;padding:1.6rem 0 1.2rem}
+h1{font-size:2.1rem;color:var(--accent2);letter-spacing:.5px}
+.tag{color:var(--muted);margin-top:.3rem;font-size:.98rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1.1rem 1.2rem;margin:1rem 0}
+.card h2{font-size:1.05rem;color:var(--accent);margin-bottom:.7rem}
+.row{display:flex;flex-wrap:wrap;gap:.9rem;align-items:flex-end;margin:.5rem 0}
+.field{display:flex;flex-direction:column;gap:.25rem}
+label{font-size:.8rem;color:var(--muted)}
+input,select{background:#0b1520;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:.45rem .6rem;font-size:1rem;width:8.5rem}
+input:focus,select:focus{outline:2px solid var(--accent)}
+button{background:var(--accent);color:#0d1822;border:0;border-radius:8px;padding:.5rem 1.1rem;font-size:.95rem;font-weight:700;cursor:pointer}
+button:hover{background:#75c2e8}
+.presets{display:flex;flex-wrap:wrap;gap:.5rem;margin:.6rem 0 .2rem}
+.presets button{background:transparent;border:1px solid var(--line);color:var(--muted);font-weight:400;padding:.35rem .8rem;font-size:.85rem}
+.presets button:hover{border-color:var(--accent);color:var(--ink)}
+.big{font-size:1.3rem;font-weight:700;color:var(--accent2)}
+.result{margin-top:.6rem;font-size:1rem;min-height:1.4rem}
+.result small{color:var(--muted);display:block;margin-top:.25rem}
+.verdict-ok{color:var(--good)} .verdict-tight{color:var(--warn)} .verdict-bad{color:var(--bad)}
+.era{font-size:.85rem;color:var(--muted);margin-bottom:.6rem;font-style:italic}
+footer{margin:2rem 0 1rem;font-size:.8rem;color:var(--muted);border-top:1px solid var(--line);padding-top:1rem}
+footer code{color:var(--accent)}
+details{margin-top:.4rem} summary{cursor:pointer;color:var(--muted);font-size:.85rem}
+table{border-collapse:collapse;margin-top:.5rem;font-size:.9rem}
+td,th{border:1px solid var(--line);padding:.3rem .6rem;text-align:left}
+th{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<h1>&#129526; IceMath</h1>
+<p class="tag">Cold plunge math that holds up. Ice, cost, exposure - numbers you can plan a plunge on.</p>
+</header>
+
+<section class="card" id="c-chill">
+<h2>Ice to chill the tub</h2>
+<p class="era">Every kilogram of ice buys you 334 kJ of melt plus the meltwater warming. Here is the honest ice bill for your target.</p>
+<div class="presets" id="presets-chill"></div>
+<div class="row">
+  <div class="field"><label for="in-vol">water (liters)</label><input id="in-vol" type="number" min="20" step="10" value="250"></div>
+  <div class="field"><label for="in-start">water now (&deg;C)</label><input id="in-start" type="number" min="5" max="40" step="1" value="24"></div>
+  <div class="field"><label for="in-target">target (&deg;C)</label><input id="in-target" type="number" min="1" max="20" step="1" value="11"></div>
+</div>
+<button id="btn-chill">Ice math</button>
+<div class="result" id="out-chill"></div>
+</section>
+
+<section class="card" id="c-cost">
+<h2>Bags &amp; cost</h2>
+<p class="era">Ice comes in bags. Convert the physics into a shopping trip.</p>
+<div class="row">
+  <div class="field"><label for="in-cvol">water (liters)</label><input id="in-cvol" type="number" min="20" step="10" value="250"></div>
+  <div class="field"><label for="in-cstart">water now (&deg;C)</label><input id="in-cstart" type="number" min="5" max="40" step="1" value="24"></div>
+  <div class="field"><label for="in-ctarget">target (&deg;C)</label><input id="in-ctarget" type="number" min="1" max="20" step="1" value="11"></div>
+  <div class="field"><label for="in-bag">bag size (lb)</label><input id="in-bag" type="number" min="5" max="25" step="5" value="10"></div>
+  <div class="field"><label for="in-price">bag price ($)</label><input id="in-price" type="number" min="1" step="0.5" value="3"></div>
+</div>
+<button id="btn-cost">Cost math</button>
+<div class="result" id="out-cost"></div>
+</section>
+
+<section class="card" id="c-target">
+<h2>Target &amp; exposure</h2>
+<p class="era">What the temperature actually means, and how long to stay in - new or experienced.</p>
+<div class="row">
+  <div class="field"><label for="in-ttarget">target (&deg;C)</label><input id="in-ttarget" type="number" min="1" max="20" step="1" value="12"></div>
+  <div class="field"><label for="in-exp">experience</label>
+    <select id="in-exp">
+      <option value="new">New to this</option>
+      <option value="exp">Experienced</option>
+    </select>
+  </div>
+</div>
+<button id="btn-target">Exposure math</button>
+<div class="result" id="out-target"></div>
+</section>
+
+<section class="card" id="c-rechill">
+<h2>Re-chill a used tub</h2>
+<p class="era">Yesterday's plunge warmed the water. Getting it back down costs less ice than the first chill - here is how much.</p>
+<div class="row">
+  <div class="field"><label for="in-rvol">water (liters)</label><input id="in-rvol" type="number" min="20" step="10" value="250"></div>
+  <div class="field"><label for="in-rcur">water now (&deg;C)</label><input id="in-rcur" type="number" min="5" max="40" step="1" value="15"></div>
+  <div class="field"><label for="in-rtarget">target (&deg;C)</label><input id="in-rtarget" type="number" min="1" max="20" step="1" value="11"></div>
+</div>
+<button id="btn-rechill">Re-chill math</button>
+<div class="result" id="out-rechill"></div>
+</section>
+
+<section class="card" id="c-why">
+<h2>Why these numbers</h2>
+<details><summary>The assumptions, stated honestly</summary>
+<table>
+<tr><th>Constant</th><th>Value</th><th>Why</th></tr>
+<tr><td>Ice at 0&deg;C</td><td>334 kJ/kg to melt</td><td>The latent heat of fusion - the melt does most of the chilling work</td></tr>
+<tr><td>Meltwater warming</td><td>4.186 kJ/kg/&deg;C</td><td>After melting, the ice-water keeps absorbing heat up to your target</td></tr>
+<tr><td>Body displacement</td><td>~70-80 L</td><td>You displace roughly your own mass in water - the tub needs less than you think</td></tr>
+<tr><td>Working range</td><td>10-15&deg;C</td><td>Where most cold-exposure protocols actually live</td></tr>
+</table>
+<p style="margin-top:.5rem;color:var(--muted);font-size:.85rem">Ambient heat gain during the chill is not modeled - add about 10% more ice on a hot day. And never plunge alone.</p>
+</details>
+</section>
+
+<footer>
+<p><strong>IceMath</strong> - part of the App Factory collection. Honest small tools, one good idea at a time.</p>
+<p>Source: <code>engine.js</code> (pure functions, tested in CI) &middot; <code>app.html</code> (this UI) &middot; <code>README.md</code></p>
+</footer>
+</div>
+
+<script src="engine.js"></script>
+<script>
+(function () {
+  function $(id) { return document.getElementById(id); }
+  function num(id) { return parseFloat($(id).value) || 0; }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+
+  $('btn-chill').addEventListener('click', function () {
+    var vol = num('in-vol'), start = num('in-start'), target = num('in-target');
+    var kg = IceEngine.iceKgNeeded(vol, start, target);
+    var lb = IceEngine.iceLbNeeded(vol, start, target);
+    var v = IceEngine.tempVerdict(target);
+    var cls = /standard/.test(v) ? 'verdict-ok' : (/mild|cold /.test(v) ? 'verdict-tight' : 'verdict-bad');
+    $('out-chill').innerHTML =
+      'Chilling ' + vol + ' L from ' + start + '&deg;C to ' + target + '&deg;C takes <span class="big">' + kg + ' kg</span> (' +
+      lb + ' lb) of ice.<br>' +
+      '<span class="' + cls + '">' + esc(v) + '</span>' +
+      '<small>On a hot day add ~10% - the tub absorbs ambient heat while the ice works.</small>';
+  });
+
+  $('btn-cost').addEventListener('click', function () {
+    var vol = num('in-cvol'), start = num('in-cstart'), target = num('in-ctarget');
+    var bag = num('in-bag'), price = num('in-price');
+    var bags = IceEngine.bagsNeeded(vol, start, target, bag);
+    var cost = IceEngine.iceCost(vol, start, target, bag, price);
+    $('out-cost').innerHTML =
+      'That is <span class="big">' + bags + ' bags</span> of ' + bag + ' lb - about <span class="big">$' + cost.toFixed(2) + '</span>.' +
+      '<small>Buying ice gets old fast; regular plungers usually end up pricing a chest freezer or a chiller.</small>';
+  });
+
+  $('btn-target').addEventListener('click', function () {
+    var target = num('in-ttarget');
+    var exp = $('in-exp').value === 'exp';
+    var mins = IceEngine.exposureMinutes(target, exp);
+    var v = IceEngine.tempVerdict(target);
+    $('out-target').innerHTML =
+      'At ' + target + '&deg;C: <span class="big">about ' + mins + ' min</span> ' +
+      (exp ? 'for an experienced plunger' : 'for someone new') + '.<br>' + esc(v) +
+      '<small>Exit while you still feel in control - shivering hard after you are out is the honest overshoot signal.</small>';
+  });
+
+  $('btn-rechill').addEventListener('click', function () {
+    var vol = num('in-rvol'), cur = num('in-rcur'), target = num('in-rtarget');
+    var kg = IceEngine.rechillKg(vol, cur, target);
+    var first = IceEngine.iceKgNeeded(vol, 24, target);
+    var saved = Math.round((1 - kg / first) * 100);
+    $('out-rechill').innerHTML =
+      'Pulling ' + vol + ' L back from ' + cur + '&deg;C to ' + target + '&deg;C takes <span class="big">' + kg + ' kg</span> - ' +
+      'about ' + saved + '% less ice than chilling from tap temperature.' +
+      '<small>A lid and shade do more for tomorrow than any amount of ice today.</small>';
+  });
+
+  var presets = [['Stock tank 300L', 300], ['Barrel 200L', 200], ['Bathtub 150L', 150]];
+  var holder = $('presets-chill');
+  presets.forEach(function (p) {
+    var b = document.createElement('button');
+    b.textContent = p[0];
+    b.addEventListener('click', function () { $('in-vol').value = p[1]; $('btn-chill').click(); });
+    holder.appendChild(b);
+  });
+
+  $('btn-chill').click();
+  $('btn-cost').click();
+  $('btn-target').click();
+  $('btn-rechill').click();
+})();
+</script>
+</body>
+</html>
